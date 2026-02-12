@@ -1,0 +1,8 @@
+README.MD
+*.lock
+*.*ignore
+./node_modules
+./dist
+*.yml
+.env
+.env-example

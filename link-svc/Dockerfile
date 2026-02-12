@@ -1,4 +1,10 @@
-FROM ubuntu:latest
-LABEL authors="user"
+FROM node:lts-alpine3.21
 
-ENTRYPOINT ["top", "-b"]
+WORKDIR /app
+
+COPY package.json .
+COPY yarn.lock .
+
+RUN yarn install
+
+COPY . .

@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "declaration": true,
+    "outDir": "./src/grpc/proto"
+  },
+  "include": ["./proto/**/*.ts"],
+  "exclude": ["node_modules"]
+}

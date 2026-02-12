@@ -1,0 +1,7 @@
+README.md
+./test
+./logs
+.gitignore
+.prettierignore
+.env
+.env-example
