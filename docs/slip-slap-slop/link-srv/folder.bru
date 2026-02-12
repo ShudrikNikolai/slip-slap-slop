@@ -1,0 +1,19 @@
+meta {
+  name: link-srv
+}
+
+auth {
+  mode: inherit
+}
+
+vars:pre-request {
+  BASE_PORT: 4000
+  API_PREFIX: api
+  API_VERSION: v1
+  BASE_URL: {{BASE_HOST}}:{{BASE_PORT}}
+  URL: {{BASE_URL}}/{{API_PREFIX}}/{{API_VERSION}}
+}
+
+docs {
+  Public API: login/register
+}

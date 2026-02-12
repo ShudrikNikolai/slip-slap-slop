@@ -1,0 +1,27 @@
+meta {
+  name: login
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{URL}}/auth/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "login": "{{LOGIN}}",
+    "password":"{{PAS}}"
+  }
+}
+
+vars:post-response {
+  ACCESS_TOKEN: 
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

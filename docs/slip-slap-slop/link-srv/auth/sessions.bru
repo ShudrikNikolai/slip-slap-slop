@@ -1,0 +1,24 @@
+meta {
+  name: sessions
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{URL}}/auth/sessions
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlZmE0NGU2My1mMWFkLTQ5ZmYtOGYzNS00MjJhNDMxNWYwYzkiLCJ1c2VybmFtZSI6InRlc3RtZSIsImxvZ2luIjoidGVzdG1lIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc3MDYzNDI5NSwiZXhwIjoxNzcxNDgwMjk1fQ.2ogthuEZfMRzAZjxqbG_FKByBCZwqJPGz-tJLHsJ3XE
+}
+
+vars:post-response {
+  ACCESS_TOKEN: 
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
