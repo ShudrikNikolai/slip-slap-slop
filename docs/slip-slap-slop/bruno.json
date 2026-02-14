@@ -1,0 +1,19 @@
+{
+  "version": "1",
+  "name": "slip-slap-slop",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ],
+  "size": 0.0052509307861328125,
+  "filesCount": 28,
+  "protobuf": {
+    "protoFiles": [
+      {
+        "path": "link.proto",
+        "type": "file"
+      }
+    ]
+  }
+}

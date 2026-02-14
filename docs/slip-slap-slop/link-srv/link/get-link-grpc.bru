@@ -1,0 +1,23 @@
+meta {
+  name: get-link-grpc
+  type: grpc
+  seq: 6
+}
+
+grpc {
+  url: http://localhost:50001
+  method: /link.LinkService/GetLink
+  body: grpc
+  protoPath: link.proto
+  auth: none
+  methodType: unary
+}
+
+body:grpc {
+  name: message 1
+  content: '''
+    {
+      "shortCode": "4519d147-306c-47bc-84bf-15684a42f9f8"
+    }
+  '''
+}
