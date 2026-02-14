@@ -9,7 +9,6 @@ import { UserRepository } from './repositories/user.repository';
 export class UserService {
     constructor(private readonly userRepository: UserRepository) {}
 
-    // Создание пользователя
     async create(createUserDto: CreateUserDto): Promise<any> {
         // Проверка существования пользователя
         const existingUser = await this.userRepository.existsUser({ login: createUserDto.login });
@@ -30,11 +29,7 @@ export class UserService {
         return this.sanitizeUser(user);
     }
 
-    // Поиск пользователей (БЕЗ загрузки связей)
     async findById(id: string): Promise<any> {
-        if (!id) {
-            throw new UnauthorizedException('User not found!');
-        }
         const user = await this.userRepository.findById(id);
 
         return this.sanitizeUser(user);
@@ -47,10 +42,6 @@ export class UserService {
     }
 
     async updateById(id: string, data: Partial<UpdateUserDto>): Promise<User | null> {
-        if (!id) {
-            throw new Error('Id is required');
-        }
-
         return this.userRepository.update(id, data);
     }
 

@@ -13,7 +13,6 @@ import { RefreshTokenRepository } from '../repositories/refresh-token.repository
 import { SessionService } from './session.service';
 
 const DEFAULT_TIME = 7 * 24 * 60 * 60 * 1000;
-// TODO
 @Injectable()
 export class AuthService {
     constructor(
@@ -31,7 +30,6 @@ export class AuthService {
 
         const user = await this.validateUser(loginDto.login, loginDto.password);
 
-        console.log('User login >>>', user);
         if (!user) {
             throw new UnauthorizedException('Invalid credentials');
         }
@@ -69,11 +67,8 @@ export class AuthService {
     }
 
     async register(registerDto: RegisterDto): Promise<LoginResponse> {
-        console.error('Test >>>');
-
         // Проверяем, существует ли пользователь
         const existingUser = await this.userRepository.findByLogin(registerDto.login);
-        console.error('Test >>>', existingUser);
 
         if (existingUser) {
             throw new UnauthorizedException('User already exist');
@@ -83,7 +78,6 @@ export class AuthService {
         const saltRounds = 10;
         const password = await bcrypt.hash(registerDto.password, saltRounds);
 
-        console.log('Test >password >>', { password, registerDto });
         // Создаем пользователя с транзакцией
         const user = await this.userRepository.createWithTransaction({
             username: registerDto.username || registerDto.login,
@@ -116,14 +110,12 @@ export class AuthService {
                 secret: this.configService.auth.jwtSecret,
             }) as RefreshTokenPayload;
 
-            // Находим refresh token в базе
             const storedToken = await this.refreshTokenRepository.findByToken(payload.jti);
 
             if (!storedToken || !storedToken.isValid()) {
                 throw new UnauthorizedException('Invalid refresh token');
             }
 
-            // Находим пользователя
             const user = await this.userRepository.findById(payload.sub);
 
             if (!user || user.isDeleted) {
@@ -133,10 +125,8 @@ export class AuthService {
             // Отзываем старый refresh token
             await this.refreshTokenRepository.revokeToken('system', 'Refreshed');
 
-            // Генерируем новые токены
             const tokens = await this.generateTokens(user);
 
-            // Сохраняем новый refresh token
             await this.refreshTokenRepository.createRefreshToken(
                 user.id,
                 tokens.refreshToken,
@@ -173,7 +163,6 @@ export class AuthService {
             throw new UnauthorizedException('User not found');
         }
 
-        // Проверяем текущий пароль
         const isPasswordValid = await bcrypt.compare(currentPassword, user.passwordHash);
 
         if (!isPasswordValid) {
@@ -264,12 +253,10 @@ export class AuthService {
     }
 
     private parseExpiryStringToSeconds(expiry: string | number): number {
-        // Если уже число, возвращаем как есть
         if (typeof expiry === 'number') {
             return expiry;
         }
 
-        // Если строка содержит только цифры
         if (/^\d+$/.test(expiry)) {
             return parseInt(expiry, 10);
         }
@@ -290,7 +277,6 @@ export class AuthService {
             return value * (multipliers[unit] || 1);
         }
 
-        // Если формат не распознан, возвращаем 15 минут по умолчанию
         console.warn(`Unrecognized expiry format: ${expiry}. Using default 15 minutes.`);
         return 900;
     }

@@ -51,14 +51,12 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
     }
 
     async createWithTransaction(userData: Partial<CreateUserDto>): Promise<User> {
-        // Используем QueryRunner для более гибкого управления
         const queryRunner = this.dataSource.createQueryRunner();
 
         await queryRunner.connect();
         await queryRunner.startTransaction();
 
         try {
-            // 1. Создаем пользователя
             //@ts-ignore
             const user = queryRunner.manager.create(User, {
                 ...userData,
@@ -68,14 +66,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
                 authMethod: 'local',
             });
 
-            // 2. Сохраняем
             const savedUser = await queryRunner.manager.save(user);
-
-            // 3. Можно добавить другие операции в транзакцию:
-            // - Создание refresh token
-            // - Создание профиля
-            // - Логирование
-            // - и т.д.
 
             await queryRunner.commitTransaction();
             return savedUser;

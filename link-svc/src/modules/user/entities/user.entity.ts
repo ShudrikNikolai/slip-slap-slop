@@ -28,7 +28,7 @@ export class User extends BaseEntity {
     @Column({
         name: 'birth_date',
         type: 'timestamptz',
-        nullable: true, // Сделайте nullable если дата не обязательна
+        nullable: true,
         default: () => 'CURRENT_TIMESTAMP',
     })
     birthDate: Date;
