@@ -63,7 +63,6 @@ services:
       - "traefik.http.services.link-svc.loadbalancer.server.port=4000"
       - "traefik.http.routers.link-svc.entrypoints=web"
 
-  # ---------- REDIRECT SERVICE (Golang) ----------
   redirect-svc:
     build:
       context: ./redirect-svc
@@ -88,7 +87,6 @@ services:
       - "traefik.http.services.redirect-svc.loadbalancer.server.port=8080"
       - "traefik.http.routers.redirect-svc.entrypoints=web"
 
-  # ---------- TRAEFIK (API GATEWAY) ----------
   traefik:
     image: traefik:v3.0
     container_name: "traefik"
@@ -100,14 +98,14 @@ services:
       - "--providers.docker.exposedbydefault=false"
       # HTTP entrypoint
       - "--entrypoints.web.address=:80"
-      # HTTPS entrypoint (раскомментируй если есть сертификаты)
+      # HTTPS entrypoint
       # - "--entrypoints.websecure.address=:443"
       # - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
       # - "--certificatesresolvers.letsencrypt.acme.email=admin@example.com"
       # - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
     ports:
       - "80:80"      # HTTP
-      - "443:443"    # HTTPS (если нужно)
+      - "443:443"    # HTTPS
       - "8081:8080"  # Dashboard
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -121,7 +119,7 @@ services:
       - "traefik.http.routers.dashboard.rule=Host(`traefik.localhost`)"
       - "traefik.http.routers.dashboard.service=api@internal"
       - "traefik.http.routers.dashboard.entrypoints=web"
-      # Global redirect to HTTPS (раскомментируй если нужно)
+      # Global redirect to HTTPS
       # - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       # - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)"
       # - "traefik.http.routers.http-catchall.entrypoints=web"
