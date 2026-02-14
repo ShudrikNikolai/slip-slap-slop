@@ -1,0 +1,136 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: "svc_psql"
+    env_file:
+      - ./docker/env/.db.docker.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - svc_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cache:
+    image: redis:8.4
+    container_name: "svc_redis"
+    env_file:
+      - ./docker/env/.cache.docker.env
+    ports:
+      - "6379:6379"
+    entrypoint: ["/bin/sh", "/scripts/redis-entrypoint.sh"]
+    volumes:
+      - redis_data:/data
+      - ./docker/scripts:/scripts
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redispass}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - svc_network
+
+  link-svc:
+    build:
+      context: ./link-svc
+      dockerfile: Dockerfile
+    container_name: "link-svc"
+    env_file:
+      - ./docker/env/.link-svc.docker.env
+      - ./docker/env/.cache.docker.env
+      - ./docker/env/.db.docker.env
+    ports:
+      - "4000:4000"
+      - "50001:50001"
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    networks:
+      - svc_network
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.link-svc.rule=Host(`link.localhost`)"
+      - "traefik.http.services.link-svc.loadbalancer.server.port=4000"
+      - "traefik.http.routers.link-svc.entrypoints=web"
+
+  # ---------- REDIRECT SERVICE (Golang) ----------
+  redirect-svc:
+    build:
+      context: ./redirect-svc
+      dockerfile: Dockerfile
+    container_name: "redirect-svc"
+    env_file:
+      - ./docker/env/.red-svc.docker.env
+      - ./docker/env/.cache.docker.env
+      - ./docker/env/.db.docker.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - link-svc
+      - cache
+    networks:
+      - svc_network
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.redirect-svc.rule=Host(`go.localhost`)"
+      - "traefik.http.services.redirect-svc.loadbalancer.server.port=8080"
+      - "traefik.http.routers.redirect-svc.entrypoints=web"
+
+  # ---------- TRAEFIK (API GATEWAY) ----------
+  traefik:
+    image: traefik:v3.0
+    container_name: "traefik"
+    command:
+      # Включаем Dashboard
+      - "--api.dashboard=true"
+      # Включаем Docker провайдер
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      # HTTP entrypoint
+      - "--entrypoints.web.address=:80"
+      # HTTPS entrypoint (раскомментируй если есть сертификаты)
+      # - "--entrypoints.websecure.address=:443"
+      # - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      # - "--certificatesresolvers.letsencrypt.acme.email=admin@example.com"
+      # - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"      # HTTP
+      - "443:443"    # HTTPS (если нужно)
+      - "8081:8080"  # Dashboard
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik/letsencrypt:/letsencrypt"
+    networks:
+      - svc_network
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      # Dashboard
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=web"
+      # Global redirect to HTTPS (раскомментируй если нужно)
+      # - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      # - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)"
+      # - "traefik.http.routers.http-catchall.entrypoints=web"
+      # - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  svc_network:
+    driver: bridge

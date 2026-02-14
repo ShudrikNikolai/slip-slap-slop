@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package link;
+option go_package = "github.com/slip-slap-slop/redirect-svc/pkg/grpc;grpc";
 
 service LinkService {
   rpc GetLink(GetLinkRequest) returns (GetLinkResponse);
