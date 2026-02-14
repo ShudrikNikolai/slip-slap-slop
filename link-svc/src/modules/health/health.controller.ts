@@ -1,8 +1,8 @@
 import { ApiOkResponse } from '@/common/decorators/api-response.decorator';
+import { Public } from '@/modules/auth/decorators';
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { HealthCheck, HttpHealthIndicator, TypeOrmHealthIndicator } from '@nestjs/terminus';
-import {Public} from "@/modules/auth/decorators";
 
 @ApiTags('HEALTH')
 @Controller('health')

@@ -16,7 +16,7 @@ export class LinkEntity extends BaseEntity {
         type: 'varchar',
         length: 50,
         default: null,
-        nullable: true
+        nullable: true,
     })
     shortCode: string;
 
