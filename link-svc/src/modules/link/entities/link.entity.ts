@@ -11,7 +11,13 @@ export class LinkEntity extends BaseEntity {
     @Column({ name: 'original_url', default: '' })
     originalUrl: string;
 
-    @Column({ name: 'short_code', type: 'uuid', default: null, nullable: true })
+    @Column({
+        name: 'short_code',
+        type: 'varchar',
+        length: 50,
+        default: null,
+        nullable: true
+    })
     shortCode: string;
 
     @Column({ default: 0 })

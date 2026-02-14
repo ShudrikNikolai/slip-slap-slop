@@ -7,7 +7,7 @@ export const RedisConfig = registerAs(CONFIG_TOKENS.REDIS.CONFIG_NAME, () => ({
     port: getEnvNumber(CONFIG_TOKENS.REDIS.PORT),
     password: getEnv(CONFIG_TOKENS.REDIS.PASSWORD),
     db: getEnvNumber(CONFIG_TOKENS.REDIS.DB),
-    keyPrefix: getEnv(CONFIG_TOKENS.REDIS.KEY_PREFIX),
+    keyPrefix: getEnv(CONFIG_TOKENS.REDIS.KEY_PREFIX, 'link-srv'),
     //
     // // Connection settings
     // retryStrategy: (times: number) => {

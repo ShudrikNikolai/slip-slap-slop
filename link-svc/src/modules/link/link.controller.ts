@@ -51,6 +51,7 @@ export class LinksController {
     @GrpcMethod('LinkService', 'GetLink')
     async GetLink(data: GetLinkRequest): Promise<GetLinkResponse> {
         try {
+            console.log('LinkService >>>', data)
             const link = await this.linkService.findByShortCode(data.shortCode);
 
             if (!link) {

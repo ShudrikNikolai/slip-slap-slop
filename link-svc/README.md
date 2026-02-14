@@ -1,12 +1,31 @@
-## Description
+# Link Service
 
-## Project setup
+Микросервис для управления короткими ссылками, пользователями и инвайтами.  
+Реализован на **NestJS** с использованием **TypeORM**, **PostgreSQL**, **Redis** и **gRPC**.
+
+## Функциональность
+
+- Регистрация и аутентификация пользователей (JWT)
+- CRUD для коротких ссылок
+- gRPC API для внутреннего использования
+- REST API для фронтенда
+- Интеграция с Redis для кэширования
+
+## Технологии
+
+- Node.js + NestJS
+- TypeORM + PostgreSQL
+- Redis (кэш)
+- gRPC (для межсервисного взаимодействия)
+- JWT (аутентификация)
+
+## Запуск
+
+### Локальная разработка
 
 ```bash
-$ yarn install
+cd link-svc && yarn install
 ```
-
-## Compile and run the project
 
 ```bash
 # development
@@ -17,17 +36,4 @@ $ yarn run start:dev
 
 # production mode
 $ yarn run start:prod
-```
-
-## Run tests
-
-```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
 ```

@@ -2,6 +2,7 @@ import { ApiOkResponse } from '@/common/decorators/api-response.decorator';
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { HealthCheck, HttpHealthIndicator, TypeOrmHealthIndicator } from '@nestjs/terminus';
+import {Public} from "@/modules/auth/decorators";
 
 @ApiTags('HEALTH')
 @Controller('health')
@@ -11,6 +12,7 @@ export class HealthController {
         private db: TypeOrmHealthIndicator,
     ) {}
 
+    @Public()
     @Get('ping')
     @HealthCheck()
     @ApiOkResponse('ok')
@@ -18,6 +20,7 @@ export class HealthController {
         return 'ok';
     }
 
+    @Public()
     @Get('network')
     @HealthCheck()
     @ApiOkResponse('ok', {
@@ -29,6 +32,7 @@ export class HealthController {
         });
     }
 
+    @Public()
     @Get('database')
     @HealthCheck()
     @ApiOkResponse('ok')
