@@ -4,6 +4,10 @@ services:
     container_name: "svc_psql"
     env_file:
       - ./docker/env/.db.docker.env
+    environment:
+      - POSTGRES_DB=${DB_DATABASE}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/scripts:/docker-entrypoint-initdb.d
