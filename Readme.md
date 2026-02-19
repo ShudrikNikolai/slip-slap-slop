@@ -20,7 +20,7 @@
 
 - Клонируйте репозиторий
 ```bash
-git clone <url>
+git clone https://github.com/ShudrikNikolai/slip-slap-slop.git
 cd shortlink 
 ```
 
